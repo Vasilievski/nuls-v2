@@ -138,9 +138,7 @@ public class RocksDbDataSource implements DbSource<byte[]> {
              * 优化读取性能方案
              */
             options.setAllowMmapReads(true);
-            //options.setCompressionType(CompressionType.NO_COMPRESSION);
             options.setCompressionType(CompressionType.LZ4_COMPRESSION);
-            options.setBottommostCompressionType(CompressionType.ZSTD_COMPRESSION);
             options.setLevelCompactionDynamicLevelBytes(true);
             options.setMaxOpenFiles(-1);
 
@@ -149,7 +147,7 @@ public class RocksDbDataSource implements DbSource<byte[]> {
             tableOption.setBlockCache(new ClockCache(32 * 1024 * 1024));
             tableOption.setCacheIndexAndFilterBlocks(true);
             tableOption.setPinL0FilterAndIndexBlocksInCache(true);
-            tableOption.setFilter(new BloomFilter(10, false));
+            tableOption.setFilterPolicy(new BloomFilter(10, false));
             options.setTableFormatConfig(tableOption);
 
             options.setMaxBackgroundCompactions(6);
