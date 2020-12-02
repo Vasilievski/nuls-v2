@@ -117,7 +117,7 @@ public class RocksDbDataSource implements DbSource<byte[]> {
     }
 
     private RocksDB createTable(String area) {
-        try {
+        try (Options options = new Options()) {
             if (StringUtils.isBlank(area)) {
                 throw new RuntimeException("empty area");
             }
@@ -133,7 +133,6 @@ public class RocksDbDataSource implements DbSource<byte[]> {
             dataPath = dataPath + File.separator + area + File.separator + "rocksdb";
             Log.info("Contract dataPath is " + dataPath);
 
-            Options options = new Options();
             options.setCreateIfMissing(true);
             /**
              * 优化读取性能方案
@@ -150,7 +149,7 @@ public class RocksDbDataSource implements DbSource<byte[]> {
             tableOption.setBlockCache(new ClockCache(32 * 1024 * 1024));
             tableOption.setCacheIndexAndFilterBlocks(true);
             tableOption.setPinL0FilterAndIndexBlocksInCache(true);
-            tableOption.setFilterPolicy(new BloomFilter(10, true));
+            tableOption.setFilter(new BloomFilter(10, false));
             options.setTableFormatConfig(tableOption);
 
             options.setMaxBackgroundCompactions(6);
